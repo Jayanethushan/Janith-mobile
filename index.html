@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Janith Mobile POS">
+<meta name="theme-color" content="#06080f">
+<meta name="description" content="Janith Mobile POS - Smart Phone Shop POS System">
+<title>Janith Mobile POS</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+<style>
+:root{
+  --bg:#06080f;--bg2:#0b0d1a;--bg3:#101322;--bg4:#161929;
+  --glass:rgba(255,255,255,0.035);--glass2:rgba(255,255,255,0.065);--glass3:rgba(255,255,255,0.1);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
+  --cyan:#00d4ff;--cyan2:#00a8cc;--cyan3:rgba(0,212,255,0.12);
+  --purple:#8b5cf6;--purple2:rgba(139,92,246,0.15);
+  --green:#10b981;--green2:rgba(16,185,129,0.12);
+  --red:#ef4444;--red2:rgba(239,68,68,0.12);
+  --orange:#f59e0b;--orange2:rgba(245,158,11,0.12);
+  --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--t4:#2d3748;
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;--r24:24px;
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+  --glow-cyan:0 0 20px rgba(0,212,255,0.3);
+  --glow-purple:0 0 20px rgba(139,92,246,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:14px;height:100%;}
+body{
+  font-family:'Exo 2',sans-serif;
+  background:var(--bg);color:var(--t1);
+  height:100%;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 70% at 90% 90%,rgba(139,92,246,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 50%,rgba(16,185,129,0.025) 0%,transparent 50%);
+}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border3);}
+
+.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);}
+.glass2{background:var(--glass2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border2);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border-radius:var(--r8);border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;font-size:13px;transition:all .18s;outline:none;white-space:nowrap;line-height:1;}
+.btn-primary{background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan2) 100%);color:#000;font-weight:700;}
+.btn-primary:hover{box-shadow:var(--glow-cyan);transform:translateY(-1px);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-ghost{background:var(--glass);border:1px solid var(--border2);color:var(--t1);}
+.btn-ghost:hover{background:var(--glass2);border-color:var(--cyan);color:var(--cyan);}
+.btn-danger{background:var(--red2);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+.btn-danger:hover{background:rgba(239,68,68,0.2);}
+.btn-success{background:var(--green2);border:1px solid rgba(16,185,129,0.3);color:var(--green);}
+.btn-success:hover{background:rgba(16,185,129,0.22);}
+.btn-purple{background:var(--purple2);border:1px solid rgba(139,92,246,0.3);color:var(--purple);}
+.btn-purple:hover{background:rgba(139,92,246,0.25);}
+.btn-orange{background:var(--orange2);border:1px solid rgba(245,158,11,0.3);color:var(--orange);}
+.btn-orange:hover{background:rgba(245,158,11,0.22);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:7px;}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:6px;}
+.btn-icon{padding:8px;border-radius:var(--r8);}
+.w-full{width:100%;}
+
+input,select,textarea{
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--t1);border-radius:var(--r8);
+  padding:9px 12px;font-family:'Exo 2',sans-serif;
+  font-size:13px;outline:none;width:100%;
+  transition:border-color .18s,box-shadow .18s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,212,255,0.15);}
+input::placeholder{color:var(--t3);}
+select option{background:var(--bg2);}
+label{font-size:12px;color:var(--t2);font-weight:500;display:block;margin-bottom:4px;}
+.form-group{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.flex{display:flex;}.items-center{align-items:center;}.justify-between{justify-content:space-between;}
+.gap-6{gap:6px;}.gap-8{gap:8px;}.gap-10{gap:10px;}.gap-12{gap:12px;}
+.mt-8{margin-top:8px;}.mb-8{margin-bottom:8px;}.mt-12{margin-top:12px;}.mb-12{margin-bottom:12px;}
+
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;line-height:1.4;}
+.badge-cyan{background:var(--cyan3);color:var(--cyan);border:1px solid rgba(0,212,255,0.25);}
+.badge-green{background:var(--green2);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.badge-red{background:var(--red2);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.badge-orange{background:var(--orange2);color:var(--orange);border:1px solid rgba(245,158,11,0.3);}
+.badge-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(139,92,246,0.3);}
+
+#app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1;}
+
+#nav{
+  display:flex;align-items:center;padding:0 16px;
+  height:52px;min-height:52px;
+  background:rgba(6,8,15,0.85);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:100;gap:6px;flex-shrink:0;
+}
+.nav-brand{
+  font-size:15px;font-weight:900;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-right:10px;white-space:nowrap;
+}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{
+  padding:6px 13px;border-radius:var(--r8);
+  cursor:pointer;font-size:12.5px;font-weight:600;
+  color:var(--t3);border:1px solid transparent;
+  transition:all .18s;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;
+}
+.nav-tab:hover{color:var(--t2);background:var(--glass);}
+.nav-tab.active{color:var(--cyan);background:var(--cyan3);border-color:rgba(0,212,255,0.2);}
+.nav-right{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
+.clock-display{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:var(--t2);background:var(--glass);border:1px solid var(--border);
+  padding:5px 9px;border-radius:var(--r8);letter-spacing:0.5px;
+}
+.sync-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);
+  transition:background .3s;
+}
+.sync-dot.offline{background:var(--red);box-shadow:0 0 6px var(--red);}
+.sync-dot.syncing{background:var(--orange);animation:pulse .8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+#content{flex:1;overflow:hidden;position:relative;}
+.tab-panel{display:none;height:100%;}
+.tab-panel.active{display:flex;flex-direction:column;}
+
+/* ── POS ── */
+#posTab{flex-direction:row;height:calc(100vh - 52px);}
+.pos-left{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px;gap:10px;min-width:0;}
+.pos-topbar{display:flex;gap:8px;align-items:center;}
+.pos-search{flex:1;position:relative;}
+.pos-search input{padding-left:36px;}
+.pos-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:14px;pointer-events:none;}
+.barcode-input{width:130px !important;font-family:'JetBrains Mono',monospace;font-size:12px;}
+
+.cat-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-shrink:0;}
+.cat-scroll::-webkit-scrollbar{height:2px;}
+.cat-chip{
+  padding:5px 13px;border-radius:20px;
+  border:1px solid var(--border2);background:var(--glass);
+  color:var(--t3);cursor:pointer;font-size:12px;font-weight:600;
+  white-space:nowrap;transition:all .18s;font-family:'Exo 2',sans-serif;
+}
+.cat-chip:hover{border-color:var(--cyan);color:var(--cyan);}
+.cat-chip.active{background:var(--cyan3);border-color:rgba(0,212,255,0.3);color:var(--cyan);}
+.cat-chip-add{border-color:rgba(16,185,129,0.3);color:var(--green);background:var(--green2);}
+.cat-chip-add:hover{border-color:var(--green);}
+
+.item-grid{
+  flex:1;overflow-y:auto;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));
+  gap:9px;align-content:start;padding-right:2px;
+}
+.item-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r12);padding:11px;cursor:pointer;
+  transition:all .18s;position:relative;
+  display:flex;flex-direction:column;gap:7px;
+}
+.item-card:hover{
+  background:var(--glass2);border-color:rgba(0,212,255,0.4);
+  box-shadow:0 4px 20px rgba(0,212,255,0.12);transform:translateY(-2px);
+}
+.item-card:active{transform:scale(0.96);}
+.item-card.out-stock{opacity:0.5;cursor:not-allowed;}
+.item-card.low-stock{border-color:rgba(245,158,11,0.35);}
+.item-emoji{font-size:28px;line-height:1;margin-bottom:2px;}
+.item-img-wrap{width:100%;aspect-ratio:1;border-radius:var(--r8);overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;}
+.item-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.item-card-name{font-size:12px;font-weight:700;line-height:1.3;color:var(--t1);}
+.item-card-price{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--cyan);}
+.item-card-ws{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);margin-top:-4px;}
+.item-card-meta{display:flex;justify-content:space-between;align-items:center;gap:4px;}
+.item-card-stock{font-size:10px;color:var(--t3);}
+.empty-state{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--t3);}
+.empty-state-icon{font-size:42px;opacity:0.35;margin-bottom:10px;}
+
+/* CART */
+.cart-panel{
+  width:350px;min-width:350px;display:flex;flex-direction:column;
+  border-left:1px solid var(--border);
+  background:rgba(6,8,15,0.6);
+}
+.cart-head{
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.cart-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.cart-badge{background:var(--cyan);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;}
+.cart-body{flex:1;overflow-y:auto;padding:9px;}
+.cart-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);gap:7px;}
+.cart-empty-icon{font-size:38px;opacity:0.3;}
+
+.cart-item{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r8);padding:9px 10px;margin-bottom:7px;position:relative;
+}
+.cart-item-name{font-size:12px;font-weight:700;margin-bottom:5px;padding-right:18px;color:var(--t1);}
+.cart-item-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.qty-ctrl{display:flex;align-items:center;gap:5px;}
+.qty-btn{
+  width:20px;height:20px;border-radius:5px;
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--t1);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;line-height:1;
+}
+.qty-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.qty-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;min-width:40px;text-align:center;}
+.cart-item-price{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--cyan);margin-left:auto;}
+.cart-item-del{position:absolute;top:5px;right:6px;background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px;line-height:1;}
+.cart-item-del:hover{color:var(--red);}
+.cart-disc-tag{font-size:10px;color:var(--green);margin-top:3px;}
+
+/* Sale mode toggle */
+.sale-mode-row{display:flex;gap:4px;margin-top:6px;}
+.sm-btn{
+  padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;
+  cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--t3);
+  transition:all .15s;font-family:'Exo 2',sans-serif;
+}
+.sm-btn.active-retail{background:var(--cyan3);border-color:rgba(0,212,255,0.4);color:var(--cyan);}
+.sm-btn.active-wholesale{background:var(--purple2);border-color:rgba(139,92,246,0.4);color:var(--purple);}
+.sm-btn.active-free{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:var(--green);}
+
+.cart-foot{padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0;}
+.disc-btns{display:flex;gap:5px;margin-bottom:10px;}
+.cart-totals{margin-bottom:11px;}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12.5px;color:var(--t2);}
+.total-row.grand{
+  border-top:1px solid var(--border);margin-top:7px;padding-top:8px;
+  color:var(--t1);font-weight:800;font-size:15px;
+}
+.total-row.grand .amount{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:19px;}
+.checkout-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  color:#000;font-family:'Exo 2',sans-serif;font-size:15px;
+  font-weight:900;border:none;border-radius:var(--r12);
+  cursor:pointer;transition:all .2s;letter-spacing:0.3px;
+}
+.checkout-btn:hover{box-shadow:0 0 28px rgba(0,212,255,0.45);transform:translateY(-1px);}
+.checkout-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ── INVENTORY ── */
+#inventoryTab{flex-direction:column;}
+.inv-bar{
+  display:flex;gap:8px;padding:12px 16px;
+  border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap;
+  flex-shrink:0;
+}
+.inv-bar h2{font-size:15px;font-weight:800;margin-right:4px;}
+.inv-search{flex:1;min-width:150px;max-width:280px;}
+.table-wrap{flex:1;overflow:auto;}
+table{width:100%;border-collapse:collapse;}
+thead{position:sticky;top:0;z-index:5;}
+th{
+  padding:9px 12px;text-align:left;font-size:11px;
+  font-weight:700;color:var(--t3);text-transform:uppercase;
+  letter-spacing:0.5px;background:var(--bg2);
+  border-bottom:1px solid var(--border2);white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+tbody tr:hover{background:var(--glass);}
+td{padding:9px 12px;font-size:12.5px;vertical-align:middle;}
+.item-thumb{
+  width:34px;height:34px;border-radius:var(--r8);
+  background:var(--bg3);display:flex;align-items:center;
+  justify-content:center;font-size:17px;flex-shrink:0;overflow:hidden;
+}
+.item-thumb img{width:100%;height:100%;object-fit:cover;}
+.stock-bar{height:3px;border-radius:2px;background:var(--bg3);margin-top:4px;min-width:50px;}
+.stock-bar-inner{height:100%;border-radius:2px;transition:width .4s;}
+
+/* ── ADMIN ── */
+#adminTab{flex-direction:column;overflow:hidden;}
+.admin-lock{
+  position:absolute;inset:0;z-index:50;
+  background:rgba(6,8,15,0.88);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+}
+.lock-card{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--r24);padding:36px 32px;
+  text-align:center;max-width:300px;width:90%;
+}
+.lock-icon{font-size:52px;margin-bottom:16px;}
+.lock-card h3{font-size:18px;font-weight:800;margin-bottom:6px;}
+.lock-card p{color:var(--t2);font-size:13px;margin-bottom:20px;}
+.pin-input{
+  text-align:center;letter-spacing:10px;font-size:24px;
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r8);padding:10px;width:100%;
+}
+.admin-scroll{flex:1;overflow-y:auto;padding:16px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r12);padding:14px;}
+.stat-lbl{font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;}
+.stat-sub{font-size:11px;color:var(--t3);margin-top:3px;}
+.admin-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.admin-section{background:var(--glass);border:1px solid var(--border);border-radius:var(--r12);padding:14px;}
+.admin-section h3{font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sale-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 10px;background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r8);margin-bottom:6px;cursor:pointer;transition:border-color .15s;
+}
+.sale-row:hover{border-color:var(--cyan);}
+.sale-row-info{font-size:12px;color:var(--t2);}
+.sale-row-info strong{color:var(--t1);font-size:13px;display:block;}
+.sale-row-amt .total{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--cyan);text-align:right;}
+.sale-row-amt .profit{font-size:11px;color:var(--green);text-align:right;}
+.top-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.top-rank{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--bg3);font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0;
+}
+.top-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.top-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width .6s;}
+.top-name{font-size:12px;font-weight:600;min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.top-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);text-align:right;min-width:35px;}
+.low-item-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 9px;background:rgba(239,68,68,0.05);
+  border:1px solid rgba(239,68,68,0.2);border-radius:var(--r8);margin-bottom:5px;
+}
+.backup-row{display:flex;gap:8px;flex-wrap:wrap;}
+.sales-filter{display:flex;gap:6px;margin-bottom:10px;align-items:center;}
+.sales-filter select{max-width:120px;padding:5px 10px;font-size:12px;}
+
+/* ── AI ASSISTANT ── */
+#aiTab{flex-direction:column;}
+.ai-head{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.ai-avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  box-shadow:var(--glow-cyan);
+}
+.ai-name{font-size:15px;font-weight:800;}
+.ai-status{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:1px;}
+.ai-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.ai-msg{display:flex;gap:9px;max-width:88%;}
+.ai-msg.user{flex-direction:row-reverse;align-self:flex-end;}
+.msg-bubble{padding:9px 13px;border-radius:var(--r12);font-size:13px;line-height:1.55;}
+.ai-msg.bot .msg-bubble{background:var(--glass2);border:1px solid var(--border2);border-radius:4px var(--r12) var(--r12) var(--r12);}
+.ai-msg.user .msg-bubble{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.22);border-radius:var(--r12) 4px var(--r12) var(--r12);}
+.msg-avatar{width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.ai-msg.bot .msg-avatar{background:linear-gradient(135deg,var(--cyan),var(--purple));}
+.ai-msg.user .msg-avatar{background:var(--bg3);border:1px solid var(--border2);}
+.typing{display:flex;align-items:center;gap:4px;padding:9px 13px;background:var(--glass2);border:1px solid var(--border2);border-radius:4px var(--r12) var(--r12) var(--r12);}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:bounce .7s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:.15s;}
+.dot:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-7px);}}
+.ai-input-bar{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+.ai-input-bar input{flex:1;}
+.ai-action{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--cyan3);border:1px solid rgba(0,212,255,0.3);border-radius:20px;color:var(--cyan);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px;}
+.ai-action:hover{background:rgba(0,212,255,0.2);}
+.ai-quick-btns{padding:8px 14px;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;border-top:1px solid var(--border);}
+.ai-quick{padding:5px 11px;border-radius:20px;background:var(--glass);border:1px solid var(--border2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Exo 2',sans-serif;}
+.ai-quick:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:22px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:popIn .18s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(0.93);}to{opacity:1;transform:scale(1);}}
+.modal-sm{max-width:360px;}
+.modal-md{max-width:500px;}
+.modal-lg{max-width:680px;}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-size:15px;font-weight:800;}
+.modal-x{background:none;border:none;color:var(--t3);cursor:pointer;font-size:19px;line-height:1;padding:3px;}
+.modal-x:hover{color:var(--t1);}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+
+/* Sale type quick pick */
+.sale-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.sale-type-card{
+  padding:14px 10px;border-radius:var(--r12);border:2px solid var(--border2);
+  background:var(--glass);cursor:pointer;text-align:center;transition:all .18s;
+}
+.sale-type-card:hover{transform:translateY(-2px);}
+.sale-type-card.retail{border-color:rgba(0,212,255,0.4);background:var(--cyan3);}
+.sale-type-card.wholesale{border-color:rgba(139,92,246,0.4);background:var(--purple2);}
+.sale-type-card.free{border-color:rgba(16,185,129,0.4);background:var(--green2);}
+.sale-type-card .stc-icon{font-size:24px;margin-bottom:6px;}
+.sale-type-card .stc-label{font-size:13px;font-weight:800;}
+.sale-type-card .stc-price{font-family:'JetBrains Mono',monospace;font-size:12px;margin-top:3px;}
+.sale-type-card.retail .stc-label{color:var(--cyan);}
+.sale-type-card.wholesale .stc-label{color:var(--purple);}
+.sale-type-card.free .stc-label{color:var(--green);}
+
+/* Item options popup */
+.opt-tabs{display:flex;gap:3px;background:var(--bg3);border-radius:var(--r8);padding:3px;margin-bottom:14px;}
+.opt-tab{flex:1;padding:7px;text-align:center;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--t2);transition:all .15s;}
+.opt-tab.active{background:var(--cyan);color:#000;}
+.liq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.liq-opt{padding:11px;border-radius:var(--r8);border:1px solid var(--border2);background:var(--glass);cursor:pointer;text-align:center;transition:all .18s;}
+.liq-opt:hover{border-color:var(--cyan);background:var(--cyan3);}
+.liq-opt .lbl{font-size:12px;font-weight:700;color:var(--t1);}
+.liq-opt .prc{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);}
+.liq-opt .amt{font-size:11px;color:var(--t3);margin-top:2px;}
+
+/* Receipt */
+.receipt{background:#fff;color:#000;font-family:'Courier New',monospace;font-size:12px;padding:18px;border-radius:8px;max-width:280px;margin:0 auto;}
+.receipt-h{text-align:center;margin-bottom:12px;border-bottom:2px dashed #ddd;padding-bottom:10px;}
+.receipt-title{font-size:16px;font-weight:700;letter-spacing:1px;}
+.receipt-sub{font-size:11px;color:#666;}
+.r-line{display:flex;justify-content:space-between;margin-bottom:3px;font-size:12px;}
+.r-total{border-top:2px dashed #ddd;margin-top:8px;padding-top:8px;}
+.r-footer{text-align:center;margin-top:10px;font-size:10px;color:#888;border-top:1px dashed #ddd;padding-top:8px;}
+@media print{
+  body>*{display:none!important;}
+  .overlay.open{display:block!important;position:fixed;inset:0;background:#fff;z-index:99999;}
+  .receipt{box-shadow:none;border-radius:0;margin:0;max-width:100%;}
+  .modal-head,.modal-foot{display:none!important;}
+}
+
+#toasts{position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;max-width:280px;}
+.toast{padding:9px 14px;border-radius:var(--r8);font-size:13px;font-weight:600;animation:toastIn .25s ease;backdrop-filter:blur(20px);border:1px solid;}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
+.toast-success{background:rgba(16,185,129,0.18);border-color:rgba(16,185,129,0.4);color:var(--green);}
+.toast-error{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:var(--red);}
+.toast-info{background:var(--cyan3);border-color:rgba(0,212,255,0.35);color:var(--cyan);}
+
+#loader{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;}
+#loader.hide{animation:fadeOut .4s ease forwards;}
+@keyframes fadeOut{to{opacity:0;pointer-events:none;}}
+.spinner{width:38px;height:38px;border:3px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin .5s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-brand{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.loader-text{color:var(--t3);font-size:13px;}
+
+#pwaBar{position:fixed;bottom:0;left:0;right:0;z-index:500;padding:12px 16px;background:rgba(11,13,26,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border2);display:none;align-items:center;justify-content:space-between;gap:10px;}
+#pwaBar.show{display:flex;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.text-cyan{color:var(--cyan);}
+.text-green{color:var(--green);}
+.text-red{color:var(--red);}
+.text-orange{color:var(--orange);}
+.text-purple{color:var(--purple);}
+.info-hint{background:var(--cyan3);border:1px solid rgba(0,212,255,0.2);border-radius:var(--r8);padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
+.info-hint code{color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.scanner-box{width:100%;border-radius:var(--r8);overflow:hidden;background:var(--bg3);min-height:220px;}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-brand">📱 Janith Mobile POS</div>
+  <div class="spinner"></div>
+  <div class="loader-text" id="loaderText">Connecting to Firebase...</div>
+</div>
+
+<!-- TOASTS -->
+<div id="toasts"></div>
+
+<!-- PWA INSTALL -->
+<div id="pwaBar">
+  <div>
+    <div style="font-weight:700;font-size:13px">📱 Install Janith Mobile POS App</div>
+    <div style="font-size:11px;color:var(--t2)">Install to home screen — fast &amp; offline ready</div>
+  </div>
+  <div style="display:flex;gap:6px;">
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('pwaBar').classList.remove('show')">Later</button>
+    <button class="btn btn-primary btn-sm" id="pwaInstallBtn">Install</button>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-brand">📱 Janith Mobile</div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" data-tab="pos" onclick="Nav.go('pos')">
+        <span>🛒</span> POS
+      </div>
+      <div class="nav-tab" data-tab="inventory" onclick="Nav.go('inventory')">
+        <span>📦</span> Inventory
+      </div>
+      <div class="nav-tab" data-tab="admin" onclick="Nav.go('admin')">
+        <span>🔐</span> Admin
+      </div>
+      <div class="nav-tab" data-tab="ai" onclick="Nav.go('ai')">
+        <span>✨</span> AI Assistant
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="sync-dot" id="syncDot" title="Sync status"></div>
+      <div class="clock-display" id="clock">00:00:00</div>
+      <button class="btn btn-ghost btn-icon" onclick="Settings.open()" title="Settings">⚙️</button>
+    </div>
+  </nav>
+
+  <div id="content">
+
+    <!-- ════ POS ════ -->
+    <div class="tab-panel active" id="posTab">
+      <div class="pos-left">
+        <div class="pos-topbar">
+          <div class="pos-search">
+            <span class="pos-search-icon">🔍</span>
+            <input type="text" id="posSearch" placeholder="Search products... (fuzzy)" oninput="POS.filter()">
+          </div>
+          <input type="text" id="barcodeInput" class="barcode-input" placeholder="📷 Barcode..." onkeypress="if(event.key==='Enter'){POS.scanBarcode(this.value);this.value='';}">
+          <button class="btn btn-ghost btn-icon" onclick="Scanner.openPOS()" title="Camera Scan">📷</button>
+        </div>
+        <div class="cat-scroll" id="catBar"></div>
+        <div class="item-grid" id="itemGrid">
+          <div class="empty-state"><div class="empty-state-icon">📱</div><div>Loading products...</div></div>
+        </div>
+      </div>
+
+      <!-- CART -->
+      <div class="cart-panel">
+        <div class="cart-head">
+          <div class="cart-title">🛒 Cart <span class="cart-badge" id="cartCount">0</span></div>
+          <button class="btn btn-ghost btn-xs" onclick="Cart.clear()">Clear</button>
+        </div>
+        <div class="cart-body" id="cartBody">
+          <div class="cart-empty">
+            <div class="cart-empty-icon">🛒</div>
+            <div>Cart is empty</div>
+            <div style="font-size:11px;color:var(--t3)">Click items to add</div>
+          </div>
+        </div>
+        <div class="cart-foot">
+          <div class="disc-btns">
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="Discount.openCart()">💰 Cart Discount</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="Discount.openItem()">🏷️ Item Discount</button>
+          </div>
+          <div class="cart-totals">
+            <div class="total-row"><span>Subtotal</span><span class="mono" id="cartSub">Rs. 0.00</span></div>
+            <div class="total-row" id="discRow" style="display:none"><span>Discount</span><span class="mono text-green" id="discAmt">-Rs. 0.00</span></div>
+            <div class="total-row grand"><span>Total</span><span class="amount" id="cartTotal">Rs. 0.00</span></div>
+          </div>
+          <button class="checkout-btn" id="checkoutBtn" onclick="Checkout.run()" disabled>💳 Complete Sale</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ INVENTORY ════ -->
+    <div class="tab-panel" id="inventoryTab">
+      <div class="inv-bar">
+        <h2>📦 Inventory</h2>
+        <input type="text" class="inv-search" id="invSearch" placeholder="🔍 Search products..." oninput="InvTable.render()">
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="CatMgr.open()">🗂️ Categories</button>
+          <button class="btn btn-primary btn-sm" onclick="ItemForm.open(null)">+ Add Product</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Retail Price</th>
+              <th>Wholesale Price</th>
+              <th>Cost</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invBody">
+            <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--t3)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ ADMIN ════ -->
+    <div class="tab-panel" id="adminTab" style="position:relative;">
+      <div class="admin-lock" id="adminLock">
+        <div class="lock-card">
+          <div class="lock-icon">🔐</div>
+          <h3>Admin Panel</h3>
+          <p>Enter your PIN to unlock</p>
+          <input type="password" id="pinInput" class="pin-input" maxlength="6" placeholder="••••" onkeypress="if(event.key==='Enter')Admin.unlock()">
+          <button class="btn btn-primary w-full mt-8" onclick="Admin.unlock()">🔓 Unlock</button>
+        </div>
+      </div>
+      <div class="admin-scroll">
+        <div class="flex items-center justify-between mb-12">
+          <h2 style="font-size:16px;font-weight:800">📊 Dashboard</h2>
+          <div style="display:flex;gap:6px">
+            <div class="sales-filter">
+              <label style="margin:0;color:var(--t2)">Period:</label>
+              <select id="adminPeriod" onchange="Admin.render()" style="max-width:110px;padding:5px 8px;font-size:12px;">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month" selected>This Month</option>
+                <option value="all">All Time</option>
+              </select>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="Admin.lock()">🔒 Lock</button>
+          </div>
+        </div>
+        <div class="stats-row" id="statsRow"></div>
+        <div class="admin-2col">
+          <div class="admin-section">
+            <h3>🏆 Top Selling</h3>
+            <div id="topItems"></div>
+          </div>
+          <div class="admin-section">
+            <h3>⚠️ Low Stock</h3>
+            <div id="lowStockDiv"></div>
+          </div>
+        </div>
+        <div class="admin-section mb-12">
+          <h3>📋 Recent Sales</h3>
+          <div id="salesDiv"></div>
+        </div>
+        <div class="admin-section">
+          <h3>💾 Backup &amp; Restore</h3>
+          <div class="backup-row">
+            <button class="btn btn-ghost btn-sm" onclick="Backup.export()">⬇️ Export JSON</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ Import JSON</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="Backup.import(event)">
+            <button class="btn btn-success btn-sm" onclick="Backup.seed()">🌱 Seed Sample Data</button>
+            <button class="btn btn-danger btn-sm" onclick="Backup.clearSales()">🗑️ Clear Sales</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ AI ASSISTANT ════ -->
+    <div class="tab-panel" id="aiTab">
+      <div class="ai-head">
+        <div class="ai-avatar">✨</div>
+        <div style="flex:1">
+          <div class="ai-name">Janith Mobile AI</div>
+          <div class="ai-status" id="aiStatus">Ready</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="AI.clear()">🗑️ Clear</button>
+      </div>
+      <div class="ai-messages" id="aiMsgs">
+        <div class="ai-msg bot">
+          <div class="msg-avatar">✨</div>
+          <div>
+            <div class="msg-bubble">
+              Hello! I'm Janith Mobile AI — your phone shop assistant 📱<br><br>
+              <strong>What I can do:</strong><br>
+              ✅ Search products and check prices<br>
+              ✅ Add items to cart<br>
+              ✅ Check stock levels<br>
+              ✅ Give sales reports<br>
+              ✅ Suggest restock items<br><br>
+              <em style="color:var(--t2)">Example: "Add iPhone 15 case to cart" or "What's low on stock?"</em>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-quick-btns">
+        <button class="ai-quick" onclick="AI.quick('What items are low on stock?')">⚠️ Low Stock</button>
+        <button class="ai-quick" onclick="AI.quick('Today sales summary')">📊 Today Sales</button>
+        <button class="ai-quick" onclick="AI.quick('Most expensive items?')">💰 Top Prices</button>
+        <button class="ai-quick" onclick="AI.quick('Out of stock items?')">📦 Out of Stock</button>
+        <button class="ai-quick" onclick="AI.quick('Total inventory value?')">🏪 Stock Value</button>
+      </div>
+      <div class="ai-input-bar">
+        <input type="text" id="aiInput" placeholder="Message the AI assistant..." onkeypress="if(event.key==='Enter')AI.send()">
+        <button class="btn btn-primary" onclick="AI.send()">➤</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════ MODALS ══════════════ -->
+
+<!-- Sale Type Picker (retail/wholesale/free) -->
+<div class="overlay" id="saleTypeModal">
+  <div class="modal modal-sm" id="saleTypeContent"></div>
+</div>
+
+<!-- Item Options (weighted/liquid) -->
+<div class="overlay" id="optModal">
+  <div class="modal modal-sm" id="optContent"></div>
+</div>
+
+<!-- Item Form -->
+<div class="overlay" id="itemModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div class="modal-title" id="itemModalTitle">Add Product</div>
+      <button class="modal-x" onclick="Modal.close('itemModal')">✕</button>
+    </div>
+    <div id="itemFormBody"></div>
+  </div>
+</div>
+
+<!-- Discount -->
+<div class="overlay" id="discModal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <div class="modal-title" id="discTitle">Apply Discount</div>
+      <button class="modal-x" onclick="Modal.close('discModal')">✕</button>
+    </div>
+    <div id="discBody"></div>
+  </div>
+</div>
+
+<!-- Receipt -->
+<div class="overlay" id="receiptModal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <div class="modal-title">🧾 Receipt</div>
+      <button class="modal-x" onclick="Modal.close('receiptModal')">✕</button>
+    </div>
+    <div id="receiptBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="Modal.close('receiptModal')">Close</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sale Detail -->
+<div class="overlay" id="saleModal">
+  <div class="modal modal-md">
+    <div class="modal-head">
+      <div class="modal-title">📋 Sale Details</div>
+      <button class="modal-x" onclick="Modal.close('saleModal')">✕</button>
+    </div>
+    <div id="saleBody"></div>
+  </div>
+</div>
+
+<!-- Category Manager -->
+<div class="overlay" id="catModal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <div class="modal-title">🗂️ Categories</div>
+      <button class="modal-x" onclick="Modal.close('catModal')">✕</button>
+    </div>
+    <div id="catBody"></div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="overlay" id="settingsModal">
+  <div class="modal modal-md">
+    <div class="modal-head">
+      <div class="modal-title">⚙️ Settings</div>
+      <button class="modal-x" onclick="Modal.close('settingsModal')">✕</button>
+    </div>
+    <div id="settingsBody"></div>
+  </div>
+</div>
+
+<!-- Scanner -->
+<div class="overlay" id="scanModal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <div class="modal-title">📷 Barcode Scanner</div>
+      <button class="modal-x" onclick="Scanner.close()">✕</button>
+    </div>
+    <div class="scanner-box" id="scanBox"></div>
+    <p style="text-align:center;color:var(--t2);font-size:12px;margin-top:10px">Camera will scan barcode → auto-add to cart</p>
+  </div>
+</div>
+
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+'use strict';
+
+// ─── CONFIG ───────────────────────────────────────
+const RTDB_URL = 'https://janith-mobile-default-rtdb.asia-southeast1.firebasedatabase.app';
+const GEMINI_KEY_DEFAULT = 'AIzaSyAf_B3yNPqUZt399ohiUyZSBZFcLTX8kfU';
+
+// ─── STATE ────────────────────────────────────────
+const S = {
+  categories: [],
+  items: [],
+  sales: [],
+  settings: {
+    shopName: 'Janith Mobile',
+    adminPin: '1234',
+    currency: 'Rs.',
+    geminiKey: GEMINI_KEY_DEFAULT,
+    lowStockAlert: 5,
+    receiptNote: 'Thank you for shopping at Janith Mobile!'
+  },
+  cart: [],
+  cartDisc: 0,
+  cartDiscType: 'percent',
+  activeCat: 'all',
+  adminUnlocked: false,
+  pollTimer: null,
+  pendingCartItem: null,
+  // temp for sale type picker
+  _salePickItem: null,
+  _salePickQty: 1,
+  _salePickLabel: null,
+  _salePickFixedPrice: null
+};
+
+// ─── FIREBASE REST ────────────────────────────────
+const DB = {
+  _sync(status) {
+    const dot = document.getElementById('syncDot');
+    if (!dot) return;
+    dot.className = 'sync-dot' + (status==='ok' ? '' : status==='syncing' ? ' syncing' : ' offline');
+  },
+  async get(path) {
+    try {
+      this._sync('syncing');
+      const r = await fetch(`${RTDB_URL}/${path}.json`);
+      const d = await r.json();
+      if (d && d.error) throw new Error('Firebase: ' + d.error + ' — Check database rules');
+      this._sync('ok');
+      return d;
+    } catch(e) { this._sync('offline'); throw e; }
+  },
+  async push(path, data) {
+    const r = await fetch(`${RTDB_URL}/${path}.json`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
+    });
+    const j = await r.json();
+    return j.name;
+  },
+  async set(path, data) {
+    await fetch(`${RTDB_URL}/${path}.json`, {
+      method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
+    });
+  },
+  async patch(path, data) {
+    await fetch(`${RTDB_URL}/${path}.json`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
+    });
+  },
+  async del(path) {
+    await fetch(`${RTDB_URL}/${path}.json`, { method:'DELETE' });
+  },
+  obj2arr(obj) {
+    if (!obj) return [];
+    return Object.entries(obj).map(([id, v]) => ({ id, ...v }));
+  }
+};
+
+// ─── INIT ─────────────────────────────────────────
+async function init() {
+  txt('Connecting to Firebase...');
+  try {
+    const settings = await DB.get('settings/main');
+    if (settings) Object.assign(S.settings, settings);
+    await loadAll();
+    document.getElementById('loader').classList.add('hide');
+    startClock();
+    startPoll();
+    setupPWA();
+    toast('Connected! 🔥', 'success');
+  } catch(e) {
+    txt('❌ Firebase error: ' + e.message);
+    document.getElementById('loader').innerHTML = `
+      <div style="text-align:center;padding:30px;max-width:420px">
+        <div style="font-size:40px;margin-bottom:16px">❌</div>
+        <div style="font-size:18px;font-weight:700;color:#ef4444;margin-bottom:10px">Firebase Connection Failed</div>
+        <div style="color:#94a3b8;font-size:13px;line-height:1.7;margin-bottom:20px">
+          Database rules are blocking access. Follow these steps:<br><br>
+          1️⃣ Go to <a href="https://console.firebase.google.com" target="_blank" style="color:#00d4ff">console.firebase.google.com</a><br>
+          2️⃣ Open your project → <strong style="color:#f1f5f9">Realtime Database</strong><br>
+          3️⃣ Click the <strong style="color:#f1f5f9">Rules</strong> tab<br>
+          4️⃣ Paste these rules:<br>
+        </div>
+        <div style="background:#101322;border:1px solid #1e293b;border-radius:8px;padding:14px;text-align:left;font-family:monospace;font-size:12px;color:#00d4ff;margin-bottom:16px">
+          {<br>&nbsp;&nbsp;"rules": {<br>&nbsp;&nbsp;&nbsp;&nbsp;".read": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;".write": true<br>&nbsp;&nbsp;}<br>}
+        </div>
+        5️⃣ Click <strong style="color:#f1f5f9">Publish</strong><br><br>
+        <button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:linear-gradient(135deg,#00d4ff,#00a8cc);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">🔄 Retry</button>
+      </div>
+    `;
+  }
+}
+
+async function loadAll() {
+  const [cats, items, sales] = await Promise.all([
+    DB.get('categories'),
+    DB.get('items'),
+    DB.get('sales')
+  ]);
+  S.categories = DB.obj2arr(cats).sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  S.items = DB.obj2arr(items);
+  S.sales = DB.obj2arr(sales).sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,100);
+  POS.renderCats();
+  POS.renderGrid();
+  InvTable.render();
+  if (S.adminUnlocked) Admin.render();
+}
+
+function startPoll() {
+  if (S.pollTimer) clearInterval(S.pollTimer);
+  S.pollTimer = setInterval(loadAll, 5000);
+}
+
+function startClock() {
+  const el = document.getElementById('clock');
+  const tick = () => { if(el) el.textContent = new Date().toLocaleTimeString('en-US',{hour12:false}); };
+  tick(); setInterval(tick, 1000);
+}
+
+function txt(t) { const el = document.getElementById('loaderText'); if(el) el.textContent = t; }
+function toast(msg, type='info') {
+  const d = document.createElement('div');
+  d.className = `toast toast-${type}`;
+  d.textContent = msg;
+  document.getElementById('toasts').appendChild(d);
+  setTimeout(() => d.remove(), 3500);
+}
+
+// ─── NAVIGATION ───────────────────────────────────
+const Nav = {
+  go(tab) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === tab+'Tab'));
+    if (tab === 'admin') Admin.render();
+    if (tab === 'inventory') InvTable.render();
+  }
+};
+
+const Modal = {
+  open(id) { document.getElementById(id).classList.add('open'); },
+  close(id) { document.getElementById(id).classList.remove('open'); }
+};
+
+// ─── CATEGORIES ───────────────────────────────────
+const Cats = {
+  async add(name) {
+    if (!name.trim()) return;
+    await DB.push('categories', { name: name.trim(), createdAt: new Date().toISOString() });
+    await loadAll();
+    toast('Category added ✅', 'success');
+  },
+  async del(id) {
+    if (!confirm('Delete this category?')) return;
+    await DB.del('categories/' + id);
+    await loadAll();
+    toast('Category deleted', 'info');
+  }
+};
+
+const CatMgr = {
+  open() { this.render(); Modal.open('catModal'); },
+  render() {
+    const body = document.getElementById('catBody');
+    if (!body) return;
+    let h = `<div class="flex gap-8 mb-8">
+      <input id="newCatName" type="text" placeholder="Category name..." style="flex:1">
+      <button class="btn btn-primary btn-sm" onclick="Cats.add(document.getElementById('newCatName').value).then(()=>CatMgr.render())">Add</button>
+    </div>`;
+    if (!S.categories.length) h += `<div style="text-align:center;color:var(--t3);padding:20px">No categories yet</div>`;
+    else S.categories.forEach(c => {
+      h += `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r8);margin-bottom:5px">
+        <span style="font-weight:600">${esc(c.name)}</span>
+        <button class="btn btn-danger btn-xs" onclick="Cats.del('${c.id}').then(()=>CatMgr.render())">Delete</button>
+      </div>`;
+    });
+    body.innerHTML = h;
+  }
+};
+
+// ─── POS ──────────────────────────────────────────
+const POS = {
+  renderCats() {
+    const bar = document.getElementById('catBar');
+    if (!bar) return;
+    const cur = S.activeCat;
+    let h = `<div class="cat-chip ${cur==='all'?'active':''}" onclick="POS.setCat('all')">🌐 All</div>`;
+    S.categories.forEach(c => {
+      h += `<div class="cat-chip ${cur===c.id?'active':''}" onclick="POS.setCat('${c.id}')">${esc(c.name)}</div>`;
+    });
+    h += `<div class="cat-chip cat-chip-add" id="addCatChip">+ Category</div>`;
+    bar.innerHTML = h;
+    bar.querySelector('#addCatChip').onclick = async () => {
+      const n = prompt('New category name:');
+      if (n) { await Cats.add(n); }
+    };
+  },
+  setCat(id) {
+    S.activeCat = id;
+    this.renderCats();
+    this.renderGrid();
+  },
+  filter() { this.renderGrid(); },
+  getItems() {
+    let items = [...S.items];
+    if (S.activeCat !== 'all') items = items.filter(i => i.categoryId === S.activeCat);
+    const q = document.getElementById('posSearch')?.value.trim();
+    if (q) {
+      const fuse = new Fuse(items, { keys:['name','barcode','description'], threshold:0.4 });
+      items = fuse.search(q).map(r => r.item);
+    }
+    return items;
+  },
+  renderGrid() {
+    const grid = document.getElementById('itemGrid');
+    if (!grid) return;
+    const items = this.getItems();
+    if (!items.length) {
+      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><div>No products found</div></div>`;
+      return;
+    }
+    const cur = S.settings.currency;
+    grid.innerHTML = items.map(item => {
+      const stock = getStock(item);
+      const isOut = stock <= 0;
+      const isLow = stock > 0 && stock <= (item.lowStockThreshold || S.settings.lowStockAlert);
+      const catEmoji = getCatEmoji(item.categoryId);
+      const img = item.image
+        ? `<div class="item-img-wrap"><img src="${esc(item.image)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='${catEmoji}'"></div>`
+        : `<div class="item-emoji">${catEmoji}</div>`;
+      const badge = isOut ? `<span class="badge badge-red">Out</span>`
+                  : isLow ? `<span class="badge badge-orange">Low</span>`
+                  : `<span class="badge badge-green">✓</span>`;
+      const stockStr = (item.unit==='kg'||item.unit==='L') ? stock.toFixed(2) : Math.floor(stock);
+      const wsPrice = item.wholesalePrice ? `<div class="item-card-ws">W: ${cur} ${parseFloat(item.wholesalePrice).toFixed(2)}</div>` : '';
+      return `<div class="item-card ${isOut?'out-stock':isLow?'low-stock':''}" onclick="POS.addFlow('${item.id}')">
+        ${img}
+        <div class="item-card-name">${esc(item.name)}</div>
+        <div class="item-card-price">${cur} ${(item.price||0).toFixed(2)}<span style="font-size:9px;color:var(--t3)"> /${item.unit||'u'}</span></div>
+        ${wsPrice}
+        <div class="item-card-meta">${badge}<span class="item-card-stock mono">${stockStr} ${item.unit||''}</span></div>
+      </div>`;
+    }).join('');
+  },
+  addFlow(itemId) {
+    const item = S.items.find(i => i.id === itemId);
+    if (!item || getStock(item) <= 0) { toast('Out of stock!','error'); return; }
+    if (item.type === 'weighted') { this.showWeightedModal(item); }
+    else if (item.type === 'liquid' && item.liquidOptions?.length) { this.showLiquidModal(item); }
+    else { this.showSaleTypePicker(item, 1); }
+  },
+  showSaleTypePicker(item, qty, label=null, fixedPrice=null) {
+    const cur = S.settings.currency;
+    const retailP = (fixedPrice !== null ? fixedPrice : qty * item.price);
+    const wsP = qty * (parseFloat(item.wholesalePrice) || item.price);
+    document.getElementById('saleTypeContent').innerHTML = `
+      <div class="modal-head">
+        <div class="modal-title">📱 ${esc(item.name)}</div>
+        <button class="modal-x" onclick="Modal.close('saleTypeModal')">✕</button>
+      </div>
+      <p style="color:var(--t2);font-size:12px;margin-bottom:12px">Select sale type for this item:</p>
+      <div class="sale-type-grid">
+        <div class="sale-type-card retail" onclick="POS.confirmSaleType('${item.id}',${qty},'retail','${label||''}',${fixedPrice!==null?fixedPrice:'null'})">
+          <div class="stc-icon">🏪</div>
+          <div class="stc-label">Retail</div>
+          <div class="stc-price" style="color:var(--cyan)">${cur} ${retailP.toFixed(2)}</div>
+        </div>
+        <div class="sale-type-card wholesale" onclick="POS.confirmSaleType('${item.id}',${qty},'wholesale','${label||''}',${fixedPrice!==null?fixedPrice:'null'})">
+          <div class="stc-icon">📦</div>
+          <div class="stc-label">Wholesale</div>
+          <div class="stc-price" style="color:var(--purple)">${cur} ${wsP.toFixed(2)}</div>
+        </div>
+        <div class="sale-type-card free" onclick="POS.confirmSaleType('${item.id}',${qty},'free','${label||''}',${fixedPrice!==null?fixedPrice:'null'})">
+          <div class="stc-icon">🎁</div>
+          <div class="stc-label">Free</div>
+          <div class="stc-price" style="color:var(--green)">${cur} 0.00</div>
+        </div>
+      </div>
+    `;
+    Modal.open('saleTypeModal');
+  },
+  confirmSaleType(itemId, qty, mode, label, fixedPrice) {
+    const item = S.items.find(i => i.id === itemId);
+    if (!item) return;
+    const lbl = label || null;
+    Cart.add(item, qty, lbl, fixedPrice !== 'null' ? parseFloat(fixedPrice) : null, mode);
+    Modal.close('saleTypeModal');
+  },
+  showWeightedModal(item) {
+    const cur = S.settings.currency;
+    document.getElementById('optContent').innerHTML = `
+      <div class="modal-head">
+        <div class="modal-title">${esc(item.name)}</div>
+        <button class="modal-x" onclick="Modal.close('optModal')">✕</button>
+      </div>
+      <div class="opt-tabs">
+        <div class="opt-tab active" id="wt1" onclick="POS.wTab(1)">💰 By Amount</div>
+        <div class="opt-tab" id="wt2" onclick="POS.wTab(2)">⚖️ By ${item.unit==='kg'?'Weight (kg)':'Quantity'}</div>
+      </div>
+      <div id="wBody1">
+        <div class="form-group">
+          <label>Customer pays (${cur})</label>
+          <input type="number" id="wAmt" placeholder="50.00" min="0" step="0.5" autofocus>
+        </div>
+        <p style="font-size:11px;color:var(--t2);margin-bottom:12px">${cur} ${item.price} / ${item.unit} → weight auto-calculated</p>
+        <button class="btn btn-primary w-full" onclick="POS.confirmWAmount('${item.id}')">Next →</button>
+      </div>
+      <div id="wBody2" style="display:none">
+        <div class="form-group">
+          <label>${item.unit==='kg'?'Weight (kg)':'Quantity'}</label>
+          <input type="number" id="wQty" placeholder="1.0" min="0.001" step="0.001">
+        </div>
+        <button class="btn btn-primary w-full" onclick="POS.confirmWQty('${item.id}')">Next →</button>
+      </div>
+    `;
+    Modal.open('optModal');
+  },
+  wTab(n) {
+    document.getElementById('wt1').classList.toggle('active', n===1);
+    document.getElementById('wt2').classList.toggle('active', n===2);
+    document.getElementById('wBody1').style.display = n===1 ? '':'none';
+    document.getElementById('wBody2').style.display = n===2 ? '':'none';
+  },
+  confirmWAmount(id) {
+    const item = S.items.find(i => i.id===id);
+    const amt = parseFloat(document.getElementById('wAmt').value);
+    if (!amt || amt<=0) { toast('Enter amount','error'); return; }
+    const qty = amt / item.price;
+    Modal.close('optModal');
+    this.showSaleTypePicker(item, qty, null, amt);
+  },
+  confirmWQty(id) {
+    const item = S.items.find(i => i.id===id);
+    const qty = parseFloat(document.getElementById('wQty').value);
+    if (!qty || qty<=0) { toast('Enter quantity','error'); return; }
+    Modal.close('optModal');
+    this.showSaleTypePicker(item, qty);
+  },
+  showLiquidModal(item) {
+    const cur = S.settings.currency;
+    const optsHtml = item.liquidOptions.map((o,i) =>
+      `<div class="liq-opt" onclick="POS.selectLiqOpt('${item.id}',${i})">
+        <div class="lbl">${esc(o.label)}</div>
+        <div class="prc">${cur} ${(o.price||0).toFixed(2)}</div>
+        <div class="amt">${o.amount} ${item.unit}</div>
+      </div>`
+    ).join('');
+    document.getElementById('optContent').innerHTML = `
+      <div class="modal-head">
+        <div class="modal-title">${esc(item.name)}</div>
+        <button class="modal-x" onclick="Modal.close('optModal')">✕</button>
+      </div>
+      <p style="color:var(--t2);font-size:12px;margin-bottom:10px">Select option:</p>
+      <div class="liq-grid">${optsHtml}</div>
+      <hr class="divider">
+      <div class="form-group">
+        <label>Custom Amount (${item.unit})</label>
+        <div class="flex gap-8">
+          <input type="number" id="customLiq" placeholder="0.5" step="0.01" style="flex:1">
+          <button class="btn btn-ghost btn-sm" onclick="POS.addCustomLiq('${item.id}')">Next →</button>
+        </div>
+      </div>
+    `;
+    Modal.open('optModal');
+  },
+  selectLiqOpt(id, idx) {
+    const item = S.items.find(i => i.id===id);
+    const opt = item.liquidOptions[idx];
+    Modal.close('optModal');
+    this.showSaleTypePicker(item, opt.amount, opt.label, opt.price);
+  },
+  addCustomLiq(id) {
+    const item = S.items.find(i => i.id===id);
+    const amt = parseFloat(document.getElementById('customLiq').value);
+    if (!amt || amt<=0) { toast('Enter amount','error'); return; }
+    Modal.close('optModal');
+    this.showSaleTypePicker(item, amt, null, amt * item.price);
+  },
+  scanBarcode(code) {
+    if (!code) return;
+    const item = S.items.find(i => i.barcode === code.trim());
+    if (item) { this.addFlow(item.id); }
+    else { toast('Barcode not found: '+code, 'error'); }
+  }
+};
+
+// ─── CART ─────────────────────────────────────────
+const Cart = {
+  add(item, qty, label=null, fixedPrice=null, saleMode='retail') {
+    const retailUnitPrice = item.price;
+    const wsUnitPrice = parseFloat(item.wholesalePrice) || item.price;
+    let unitPrice, price;
+
+    if (saleMode === 'free') {
+      unitPrice = 0; price = 0;
+    } else if (saleMode === 'wholesale') {
+      unitPrice = wsUnitPrice;
+      price = fixedPrice !== null ? 0 : qty * wsUnitPrice;
+    } else {
+      unitPrice = retailUnitPrice;
+      price = fixedPrice !== null ? fixedPrice : qty * retailUnitPrice;
+    }
+
+    // Merge only for unit-type retail without label
+    if (item.type !== 'weighted' && item.type !== 'liquid' && saleMode !== 'free') {
+      const ex = S.cart.findIndex(c =>
+        c.itemId===item.id && !c.label && c.saleMode===saleMode
+      );
+      if (ex >= 0) {
+        S.cart[ex].qty += qty;
+        S.cart[ex].price = S.cart[ex].qty * S.cart[ex].unitPrice;
+        this.render(); return;
+      }
+    }
+
+    S.cart.push({
+      itemId: item.id, name: item.name, qty, unit: item.unit||'unit',
+      retailUnitPrice, wholesaleUnitPrice: wsUnitPrice,
+      unitPrice, price, label,
+      discount: item.defaultDiscount||0, discType:'percent',
+      saleMode
+    });
+    this.render();
+    const modeLabel = saleMode==='free' ? '🎁 FREE' : saleMode==='wholesale' ? 'Wholesale' : 'Retail';
+    toast(`${item.name} added [${modeLabel}] ✓`, 'success');
+  },
+  setSaleMode(i, mode) {
+    const ci = S.cart[i];
+    ci.saleMode = mode;
+    if (mode === 'free') {
+      ci.unitPrice = 0; ci.price = 0;
+    } else if (mode === 'wholesale') {
+      ci.unitPrice = ci.wholesaleUnitPrice;
+      ci.price = ci.qty * ci.wholesaleUnitPrice;
+    } else {
+      ci.unitPrice = ci.retailUnitPrice;
+      ci.price = ci.qty * ci.retailUnitPrice;
+    }
+    ci.discount = 0;
+    this.render();
+  },
+  remove(i) { S.cart.splice(i,1); this.render(); },
+  updateQty(i, delta) {
+    const ci = S.cart[i];
+    if (ci.saleMode === 'free') { ci.qty = Math.max(1, ci.qty + delta); this.render(); return; }
+    const newQ = Math.max(0.001, ci.qty + delta);
+    ci.qty = newQ;
+    ci.price = newQ * ci.unitPrice;
+    this.render();
+  },
+  clear() {
+    if (!S.cart.length) return;
+    if (!confirm('Clear cart?')) return;
+    S.cart = []; S.cartDisc = 0;
+    this.render();
+  },
+  sub() {
+    return S.cart.reduce((s,ci) => {
+      const d = ci.discType==='percent' ? ci.price*(ci.discount||0)/100 : (ci.discount||0);
+      return s + ci.price - d;
+    }, 0);
+  },
+  total() {
+    const sub = this.sub();
+    const d = S.cartDiscType==='percent' ? sub*S.cartDisc/100 : S.cartDisc;
+    return Math.max(0, sub - d);
+  },
+  render() {
+    const cur = S.settings.currency;
+    const body = document.getElementById('cartBody');
+    const count = document.getElementById('cartCount');
+    const btn = document.getElementById('checkoutBtn');
+    const subEl = document.getElementById('cartSub');
+    const totEl = document.getElementById('cartTotal');
+    const discRow = document.getElementById('discRow');
+    const discAmtEl = document.getElementById('discAmt');
+
+    count.textContent = S.cart.length;
+    const sub = this.sub();
+    const total = this.total();
+    subEl.textContent = `${cur} ${sub.toFixed(2)}`;
+    totEl.textContent = `${cur} ${total.toFixed(2)}`;
+    const discVal = sub - total;
+    discRow.style.display = discVal > 0 ? '' : 'none';
+    discAmtEl.textContent = `-${cur} ${discVal.toFixed(2)}`;
+    btn.disabled = S.cart.length === 0;
+
+    if (!S.cart.length) {
+      body.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div>Cart is empty</div><div style="font-size:11px">Click items to add</div></div>`;
+      return;
+    }
+    body.innerHTML = S.cart.map((ci,idx) => {
+      const isW = ci.unit==='kg'||ci.unit==='L';
+      const d = ci.discType==='percent' ? ci.price*(ci.discount||0)/100 : (ci.discount||0);
+      const net = ci.price - d;
+      const qDisplay = isW ? ci.qty.toFixed(3) : ci.qty;
+      const smR = ci.saleMode==='retail' ? 'active-retail' : '';
+      const smW = ci.saleMode==='wholesale' ? 'active-wholesale' : '';
+      const smF = ci.saleMode==='free' ? 'active-free' : '';
+      return `<div class="cart-item">
+        <button class="cart-item-del" onclick="Cart.remove(${idx})">✕</button>
+        <div class="cart-item-name">${esc(ci.name)}${ci.label?` <span style="color:var(--t3)">(${esc(ci.label)})</span>`:''}</div>
+        <div class="cart-item-row">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="Cart.updateQty(${idx},${isW?-0.1:-1})">−</button>
+            <span class="qty-val">${qDisplay} ${ci.unit}</span>
+            <button class="qty-btn" onclick="Cart.updateQty(${idx},${isW?0.1:1})">+</button>
+          </div>
+          <span class="cart-item-price">${ci.saleMode==='free' ? '<span style="color:var(--green)">FREE</span>' : `${cur} ${net.toFixed(2)}`}</span>
+        </div>
+        <div class="sale-mode-row">
+          <button class="sm-btn ${smR}" onclick="Cart.setSaleMode(${idx},'retail')">🏪 Retail</button>
+          <button class="sm-btn ${smW}" onclick="Cart.setSaleMode(${idx},'wholesale')">📦 Wholesale</button>
+          <button class="sm-btn ${smF}" onclick="Cart.setSaleMode(${idx},'free')">🎁 Free</button>
+        </div>
+        ${ci.discount && ci.saleMode!=='free' ? `<div class="cart-disc-tag">Discount: ${ci.discount}${ci.discType==='percent'?'%':' '+cur}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+};
+
+// ─── DISCOUNT ─────────────────────────────────────
+const Discount = {
+  openCart() {
+    const cur = S.settings.currency;
+    document.getElementById('discTitle').textContent = '💰 Cart Discount';
+    document.getElementById('discBody').innerHTML = `
+      <div class="form-group">
+        <label>Discount Type</label>
+        <select id="dType">
+          <option value="percent" ${S.cartDiscType==='percent'?'selected':''}>Percentage (%)</option>
+          <option value="fixed" ${S.cartDiscType==='fixed'?'selected':''}>Fixed (${cur})</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Value</label>
+        <input type="number" id="dVal" value="${S.cartDisc}" min="0" step="0.5">
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="S.cartDisc=0;Cart.render();Modal.close('discModal')">Remove</button>
+        <button class="btn btn-primary" onclick="
+          S.cartDiscType=document.getElementById('dType').value;
+          S.cartDisc=parseFloat(document.getElementById('dVal').value)||0;
+          Cart.render();Modal.close('discModal');toast('Discount applied ✓','success')
+        ">Apply</button>
+      </div>
+    `;
+    Modal.open('discModal');
+  },
+  openItem() {
+    if (!S.cart.length) { toast('Cart is empty','error'); return; }
+    const cur = S.settings.currency;
+    document.getElementById('discTitle').textContent = '🏷️ Item Discount';
+    const opts = S.cart.map((c,i) => `<option value="${i}">${esc(c.name)} (${cur} ${c.price.toFixed(2)}) [${c.saleMode}]</option>`).join('');
+    document.getElementById('discBody').innerHTML = `
+      <div class="form-group">
+        <label>Item</label>
+        <select id="dItem">${opts}</select>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="dItemType">
+          <option value="percent">% Percentage</option>
+          <option value="fixed">Fixed (${cur})</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Value</label>
+        <input type="number" id="dItemVal" value="0" min="0" step="0.5">
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="Modal.close('discModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="
+          const idx=parseInt(document.getElementById('dItem').value);
+          S.cart[idx].discount=parseFloat(document.getElementById('dItemVal').value)||0;
+          S.cart[idx].discType=document.getElementById('dItemType').value;
+          Cart.render();Modal.close('discModal');toast('Item discount applied ✓','success')
+        ">Apply</button>
+      </div>
+    `;
+    Modal.open('discModal');
+  }
+};
+
+// ─── CHECKOUT ─────────────────────────────────────
+const Checkout = {
+  async run() {
+    if (!S.cart.length) return;
+    const total = Cart.total();
+    const sub = Cart.sub();
+    let profit = 0;
+    const saleItems = [];
+
+    for (const ci of S.cart) {
+      const item = S.items.find(i => i.id===ci.itemId);
+      if (!item) continue;
+
+      // FIFO stock deduction
+      let remaining = ci.qty;
+      const batches = [...(item.stockBatches||[])];
+      for (let i = 0; i < batches.length && remaining > 0; i++) {
+        if ((batches[i].quantity||0) <= 0) continue;
+        const used = Math.min(batches[i].quantity, remaining);
+        const costHere = used * (batches[i].costPrice || item.costPrice || 0);
+        const saleHere = ci.saleMode==='free' ? 0 : used * ci.unitPrice;
+        const discHere = ci.saleMode==='free' ? 0 :
+          ci.discType==='percent' ? saleHere*(ci.discount||0)/100 : (ci.discount||0)*(used/ci.qty);
+        profit += (saleHere - discHere) - costHere;
+        batches[i] = {...batches[i], quantity: batches[i].quantity - used};
+        remaining -= used;
+      }
+
+      try {
+        await DB.patch('items/'+item.id, { stockBatches: batches });
+      } catch(e) { console.error(e); }
+
+      const discAmt = ci.saleMode==='free' ? 0 :
+        ci.discType==='percent' ? ci.price*(ci.discount||0)/100 : (ci.discount||0);
+      saleItems.push({
+        itemId:ci.itemId, name:ci.name, qty:ci.qty, unit:ci.unit,
+        unitPrice:ci.unitPrice, discount:ci.discount||0, discType:ci.discType||'percent',
+        price: ci.saleMode==='free' ? 0 : ci.price - discAmt,
+        saleMode: ci.saleMode||'retail'
+      });
+    }
+
+    const cartDiscAmt = S.cartDiscType==='percent' ? sub*S.cartDisc/100 : S.cartDisc;
+    const sale = {
+      date: new Date().toISOString(),
+      items: saleItems,
+      subtotal: sub,
+      cartDiscount: cartDiscAmt,
+      total,
+      profit: profit - cartDiscAmt,
+      status: 'completed'
+    };
+
+    try {
+      const id = await DB.push('sales', sale);
+      sale.id = id;
+      Receipt.show(sale);
+      S.cart = []; S.cartDisc = 0;
+      Cart.render();
+      await loadAll();
+      toast('Sale completed! 🎉','success');
+    } catch(e) {
+      toast('Sale error: '+e.message,'error');
+    }
+  }
+};
+
+// ─── RECEIPT ──────────────────────────────────────
+const Receipt = {
+  show(sale) {
+    const cur = S.settings.currency;
+    const shop = S.settings.shopName;
+    const date = new Date(sale.date).toLocaleString();
+    const itemsH = (sale.items||[]).map(si => {
+      const modeTag = si.saleMode==='free' ? ' [FREE]' : si.saleMode==='wholesale' ? ' [WS]' : '';
+      return `<div class="r-line"><span>${esc(si.name)}${modeTag} x${typeof si.qty==='number'?si.qty.toFixed(2):si.qty}</span><span>${si.saleMode==='free' ? 'FREE' : `${cur} ${(si.price||0).toFixed(2)}`}</span></div>`;
+    }).join('');
+    document.getElementById('receiptBody').innerHTML = `
+      <div class="receipt">
+        <div class="receipt-h">
+          <div class="receipt-title">${esc(shop)}</div>
+          <div class="receipt-sub">${date}</div>
+          <div class="receipt-sub">Sale #${(sale.id||'').slice(-8)}</div>
+        </div>
+        <div>${itemsH}</div>
+        <div class="r-total">
+          <div class="r-line"><span>Subtotal</span><span>${cur} ${(sale.subtotal||0).toFixed(2)}</span></div>
+          ${sale.cartDiscount > 0 ? `<div class="r-line"><span>Discount</span><span>-${cur} ${sale.cartDiscount.toFixed(2)}</span></div>` : ''}
+          <div class="r-line" style="font-size:14px;font-weight:700"><span>TOTAL</span><span>${cur} ${(sale.total||0).toFixed(2)}</span></div>
+        </div>
+        <div class="r-footer">${esc(S.settings.receiptNote)}</div>
+      </div>
+    `;
+    Modal.open('receiptModal');
+  }
+};
+
+// ─── INVENTORY TABLE ──────────────────────────────
+const InvTable = {
+  render() {
+    const tbody = document.getElementById('invBody');
+    if (!tbody) return;
+    const q = document.getElementById('invSearch')?.value.trim().toLowerCase();
+    const cur = S.settings.currency;
+    let items = [...S.items];
+    if (q) items = items.filter(i =>
+      i.name?.toLowerCase().includes(q) ||
+      i.barcode?.toLowerCase().includes(q) ||
+      S.categories.find(c=>c.id===i.categoryId)?.name?.toLowerCase().includes(q)
+    );
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--t3)">No products found. Add your first product! ➕</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = items.map(item => {
+      const stock = getStock(item);
+      const thresh = item.lowStockThreshold || S.settings.lowStockAlert;
+      const isLow = stock <= thresh;
+      const isOut = stock <= 0;
+      const cat = S.categories.find(c=>c.id===item.categoryId)?.name || '—';
+      const pct = Math.min(100, (stock / Math.max(thresh*3,1)) * 100);
+      const barColor = isOut ? 'var(--red)' : isLow ? 'var(--orange)' : 'var(--green)';
+      const typeLabel = {weighted:'⚖️ Weighted',liquid:'🫙 Liquid',unit:'📦 Unit'}[item.type]||'📦 Unit';
+      const batches = (item.stockBatches||[]).filter(b=>b.quantity>0).length;
+      const thumb = item.image
+        ? `<div class="item-thumb"><img src="${esc(item.image)}" alt="" onerror="this.parentNode.textContent='${getCatEmoji(item.categoryId)}'"></div>`
+        : `<div class="item-thumb">${getCatEmoji(item.categoryId)}</div>`;
+      return `<tr>
+        <td><div class="flex items-center gap-8">
+          ${thumb}
+          <div>
+            <div style="font-weight:700">${esc(item.name)}</div>
+            ${item.barcode?`<div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">${esc(item.barcode)}</div>`:''}
+          </div>
+        </div></td>
+        <td><span class="badge badge-cyan">${esc(cat)}</span></td>
+        <td style="font-size:12px">${typeLabel}</td>
+        <td><span class="mono text-cyan">${cur} ${(item.price||0).toFixed(2)}</span></td>
+        <td><span class="mono text-purple">${item.wholesalePrice ? `${cur} ${parseFloat(item.wholesalePrice).toFixed(2)}` : '—'}</span></td>
+        <td><span class="mono" style="color:var(--t2)">${cur} ${(item.costPrice||0).toFixed(2)}</span></td>
+        <td>
+          <div style="font-size:13px;font-weight:700">${stock.toFixed(2)} <span style="color:var(--t3);font-size:10px">${item.unit||''}</span></div>
+          <div class="stock-bar"><div class="stock-bar-inner" style="width:${pct}%;background:${barColor}"></div></div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">${batches} batch${batches!==1?'es':''}</div>
+        </td>
+        <td>${isOut?'<span class="badge badge-red">Out</span>':isLow?'<span class="badge badge-orange">Low</span>':'<span class="badge badge-green">In Stock</span>'}</td>
+        <td><div class="flex gap-6">
+          <button class="btn btn-ghost btn-xs" onclick="ItemForm.open('${item.id}')">✏️</button>
+          <button class="btn btn-success btn-xs" onclick="StockAdd.open('${item.id}')">+📦</button>
+          <button class="btn btn-danger btn-xs" onclick="Items.del('${item.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+};
+
+// ─── ITEMS ────────────────────────────────────────
+const Items = {
+  async del(id) {
+    if (!confirm('Delete this product?')) return;
+    await DB.del('items/'+id);
+    await loadAll();
+    toast('Product deleted','info');
+  }
+};
+
+const StockAdd = {
+  open(id) {
+    const item = S.items.find(i=>i.id===id);
+    if (!item) return;
+    const cur = S.settings.currency;
+    document.getElementById('discTitle').textContent = `📦 Add Stock — ${item.name}`;
+    document.getElementById('discBody').innerHTML = `
+      <div class="form-group">
+        <label>Quantity (${item.unit})</label>
+        <input type="number" id="saQty" placeholder="10" min="0.001" step="0.001" autofocus>
+      </div>
+      <div class="form-group">
+        <label>Cost Price (${cur} per ${item.unit})</label>
+        <input type="number" id="saCost" value="${item.costPrice||''}" placeholder="0.00" min="0" step="0.5">
+      </div>
+      <div class="form-group">
+        <label>Date Received</label>
+        <input type="date" id="saDate" value="${new Date().toISOString().split('T')[0]}">
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="Modal.close('discModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="StockAdd.confirm('${id}')">➕ Add Stock</button>
+      </div>
+    `;
+    Modal.open('discModal');
+  },
+  async confirm(id) {
+    const qty = parseFloat(document.getElementById('saQty').value);
+    if (!qty||qty<=0) { toast('Enter quantity','error'); return; }
+    const cost = parseFloat(document.getElementById('saCost').value)||0;
+    const date = document.getElementById('saDate').value;
+    const item = S.items.find(i=>i.id===id);
+    const batches = [...(item.stockBatches||[])];
+    batches.push({ batchId:'b_'+Date.now(), quantity:qty, costPrice:cost, dateAdded:date });
+    await DB.patch('items/'+id, { stockBatches: batches });
+    await loadAll();
+    toast(`Stock added: ${qty} ${item.unit} ✅`,'success');
+    Modal.close('discModal');
+  }
+};
+
+// ─── ITEM FORM ────────────────────────────────────
+const ItemForm = {
+  open(id) {
+    const item = id ? S.items.find(i=>i.id===id) : null;
+    document.getElementById('itemModalTitle').textContent = item ? '✏️ Edit Product' : '➕ Add New Product';
+    document.getElementById('itemFormBody').innerHTML = this.getHTML(item);
+    if (item) this.toggleType();
+    if (item?.liquidOptions?.length) this.renderLiqOpts(item.liquidOptions);
+    Modal.open('itemModal');
+  },
+  getHTML(item) {
+    const cur = S.settings.currency;
+    const catOpts = S.categories.map(c => `<option value="${c.id}" ${item?.categoryId===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
+    return `
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input id="fName" type="text" value="${esc(item?.name||'')}" placeholder="e.g. Samsung Galaxy A55 Case" autofocus>
+        </div>
+        <div class="form-group">
+          <label>Barcode (optional)</label>
+          <input id="fBarcode" type="text" value="${esc(item?.barcode||'')}" placeholder="Scan or type barcode...">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fCat"><option value="">-- Select --</option>${catOpts}</select>
+        </div>
+        <div class="form-group">
+          <label>Item Type</label>
+          <select id="fType" onchange="ItemForm.toggleType()">
+            <option value="unit" ${!item?.type||item?.type==='unit'?'selected':''}>📦 Unit</option>
+            <option value="weighted" ${item?.type==='weighted'?'selected':''}>⚖️ Weighted</option>
+            <option value="liquid" ${item?.type==='liquid'?'selected':''}>🫙 Liquid</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-4">
+        <div class="form-group">
+          <label>Retail Price (${cur})</label>
+          <input id="fPrice" type="number" value="${item?.price||''}" placeholder="0.00" min="0" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Wholesale Price (${cur})</label>
+          <input id="fWsPrice" type="number" value="${item?.wholesalePrice||''}" placeholder="0.00" min="0" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Cost Price (${cur})</label>
+          <input id="fCost" type="number" value="${item?.costPrice||''}" placeholder="0.00" min="0" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Unit</label>
+          <input id="fUnit" type="text" value="${esc(item?.unit||'pcs')}" placeholder="pcs / kg / L / unit">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Low Stock Alert</label>
+          <input id="fThresh" type="number" value="${item?.lowStockThreshold||S.settings.lowStockAlert}" min="0">
+        </div>
+        <div class="form-group">
+          <label>Default Discount (%)</label>
+          <input id="fDisc" type="number" value="${item?.defaultDiscount||0}" min="0" max="100">
+        </div>
+      </div>
+      <div id="fWeightHint" style="display:none">
+        <div class="info-hint">⚖️ Weighted: In POS you can enter amount (Rs.) or quantity. Stock tracked by kg/L.</div>
+      </div>
+      <div id="fLiquidFields" style="display:none">
+        <div style="background:var(--purple2);border:1px solid rgba(139,92,246,0.25);border-radius:var(--r8);padding:14px;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px">🫙 Liquid Options</div>
+          <div id="liqOptsList"></div>
+          <button class="btn btn-ghost btn-sm mt-8" onclick="ItemForm.addLiqRow()">+ Add Option</button>
+        </div>
+      </div>
+      ${!item ? `
+      <div class="form-group">
+        <label>Initial Stock Quantity</label>
+        <input id="fInitStock" type="number" value="0" min="0" step="0.001">
+      </div>` : ''}
+      <div class="form-group">
+        <label>Image URL (optional)</label>
+        <input id="fImg" type="text" value="${esc(item?.image||'')}" placeholder="https://example.com/image.jpg">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="fDesc" rows="2">${esc(item?.description||'')}</textarea>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="Modal.close('itemModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="ItemForm.save(${item?`'${item.id}'`:null})">💾 ${item?'Update':'Save'} Product</button>
+      </div>
+    `;
+  },
+  toggleType() {
+    const t = document.getElementById('fType')?.value;
+    const unitEl = document.getElementById('fUnit');
+    document.getElementById('fWeightHint').style.display = t==='weighted'?'':'none';
+    document.getElementById('fLiquidFields').style.display = t==='liquid'?'':'none';
+    if (unitEl) {
+      if (t==='weighted' && unitEl.value==='pcs') unitEl.value='kg';
+      if (t==='liquid' && unitEl.value==='pcs') unitEl.value='L';
+      if (t==='unit' && (unitEl.value==='kg'||unitEl.value==='L')) unitEl.value='pcs';
+    }
+  },
+  addLiqRow(label='', amount='', price='') {
+    const list = document.getElementById('liqOptsList');
+    const div = document.createElement('div');
+    div.className = 'flex gap-8 mb-8 items-center';
+    div.innerHTML = `
+      <input class="lo-label" type="text" value="${esc(label)}" placeholder="Label (e.g. Half)" style="flex:1">
+      <input class="lo-amount" type="number" value="${amount}" placeholder="Amount" style="width:80px" min="0.01" step="0.01">
+      <input class="lo-price" type="number" value="${price}" placeholder="Price" style="width:80px" min="0" step="0.5">
+      <button class="btn btn-danger btn-xs" onclick="this.closest('div').remove()">✕</button>
+    `;
+    list.appendChild(div);
+  },
+  renderLiqOpts(opts) { opts.forEach(o => this.addLiqRow(o.label,o.amount,o.price)); },
+  getLiqOpts() {
+    return Array.from(document.querySelectorAll('#liqOptsList .flex')).map(r => ({
+      label: r.querySelector('.lo-label').value,
+      amount: parseFloat(r.querySelector('.lo-amount').value)||0,
+      price: parseFloat(r.querySelector('.lo-price').value)||0
+    })).filter(o => o.label && o.amount>0);
+  },
+  async save(id) {
+    const name = document.getElementById('fName').value.trim();
+    if (!name) { toast('Product name required','error'); return; }
+    const type = document.getElementById('fType').value;
+    const data = {
+      name, type,
+      barcode: document.getElementById('fBarcode').value.trim()||null,
+      categoryId: document.getElementById('fCat').value||null,
+      price: parseFloat(document.getElementById('fPrice').value)||0,
+      wholesalePrice: parseFloat(document.getElementById('fWsPrice').value)||null,
+      costPrice: parseFloat(document.getElementById('fCost').value)||0,
+      unit: document.getElementById('fUnit').value||'pcs',
+      lowStockThreshold: parseFloat(document.getElementById('fThresh').value)||5,
+      defaultDiscount: parseFloat(document.getElementById('fDisc').value)||0,
+      image: document.getElementById('fImg').value.trim()||null,
+      description: document.getElementById('fDesc').value.trim()||null,
+      liquidOptions: type==='liquid' ? this.getLiqOpts() : null,
+      updatedAt: new Date().toISOString()
+    };
+    if (!id) {
+      const iq = parseFloat(document.getElementById('fInitStock')?.value)||0;
+      data.createdAt = new Date().toISOString();
+      data.stockBatches = iq>0 ? [{batchId:'b_'+Date.now(),quantity:iq,costPrice:data.costPrice,dateAdded:new Date().toISOString().split('T')[0]}] : [];
+      await DB.push('items', data);
+      toast('Product added ✅','success');
+    } else {
+      await DB.patch('items/'+id, data);
+      toast('Product updated ✅','success');
+    }
+    Modal.close('itemModal');
+    await loadAll();
+  }
+};
+
+// ─── ADMIN ────────────────────────────────────────
+const Admin = {
+  unlock() {
+    const pin = document.getElementById('pinInput').value;
+    if (pin === S.settings.adminPin) {
+      S.adminUnlocked = true;
+      document.getElementById('adminLock').style.display = 'none';
+      this.render();
+      toast('Admin unlocked 🔓','success');
+    } else {
+      toast('Wrong PIN ❌','error');
+      document.getElementById('pinInput').value = '';
+    }
+  },
+  lock() {
+    S.adminUnlocked = false;
+    document.getElementById('adminLock').style.display = 'flex';
+    document.getElementById('pinInput').value = '';
+  },
+  getSales() {
+    const period = document.getElementById('adminPeriod')?.value || 'month';
+    const now = new Date();
+    return S.sales.filter(s => {
+      const d = new Date(s.date);
+      if (period==='today') return d.toDateString()===now.toDateString();
+      if (period==='week') { const w=new Date(now); w.setDate(w.getDate()-7); return d>=w; }
+      if (period==='month') return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+      return true;
+    });
+  },
+  render() {
+    if (!S.adminUnlocked) return;
+    const cur = S.settings.currency;
+    const sales = this.getSales();
+    const total = sales.reduce((a,s)=>a+(s.total||0),0);
+    const profit = sales.reduce((a,s)=>a+(s.profit||0),0);
+    const totalStockVal = S.items.reduce((a,i)=>a+getStock(i)*(i.costPrice||0),0);
+    const lowCount = S.items.filter(i=>getStock(i)<=(i.lowStockThreshold||S.settings.lowStockAlert)).length;
+    const freeCount = sales.reduce((a,s) => a + (s.items||[]).filter(i=>i.saleMode==='free').length, 0);
+
+    document.getElementById('statsRow').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-lbl">💰 Revenue</div>
+        <div class="stat-val text-cyan">${cur} ${total.toFixed(2)}</div>
+        <div class="stat-sub">${sales.length} transactions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">📈 Profit</div>
+        <div class="stat-val ${profit>=0?'text-green':'text-red'}">${cur} ${profit.toFixed(2)}</div>
+        <div class="stat-sub">${total>0?(profit/total*100).toFixed(1):0}% margin</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">🏪 Stock Value</div>
+        <div class="stat-val text-purple">${cur} ${totalStockVal.toFixed(2)}</div>
+        <div class="stat-sub">${S.items.length} products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">⚠️ Low Stock</div>
+        <div class="stat-val text-orange">${lowCount}</div>
+        <div class="stat-sub">Items need restock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">🎁 Free Items Given</div>
+        <div class="stat-val text-green">${freeCount}</div>
+        <div class="stat-sub">Complimentary items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">🛒 Avg Sale</div>
+        <div class="stat-val" style="color:var(--t1)">${cur} ${sales.length ? (total/sales.length).toFixed(2) : '0.00'}</div>
+        <div class="stat-sub">Per transaction</div>
+      </div>
+    `;
+
+    // Top items
+    const itemCounts = {};
+    sales.forEach(s => s.items?.forEach(si => {
+      itemCounts[si.itemId] = (itemCounts[si.itemId]||0) + (si.qty||1);
+    }));
+    const top = Object.entries(itemCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const maxQty = top[0]?.[1]||1;
+    document.getElementById('topItems').innerHTML = top.length ? top.map(([id,qty],i) => {
+      const nm = S.items.find(it=>it.id===id)?.name || id.slice(-6);
+      return `<div class="top-row">
+        <div class="top-rank">${i+1}</div>
+        <div class="top-name" title="${esc(nm)}">${esc(nm)}</div>
+        <div class="top-bar"><div class="top-bar-fill" style="width:${(qty/maxQty*100).toFixed(0)}%"></div></div>
+        <div class="top-count">${qty.toFixed(1)}</div>
+      </div>`;
+    }).join('') : `<div style="color:var(--t3);text-align:center;padding:14px">No sales data yet</div>`;
+
+    // Low stock
+    const lowItems = S.items.filter(i=>getStock(i)<=(i.lowStockThreshold||S.settings.lowStockAlert));
+    document.getElementById('lowStockDiv').innerHTML = lowItems.length ? lowItems.map(item => {
+      const st = getStock(item);
+      return `<div class="low-item-row">
+        <div>
+          <div style="font-size:12px;font-weight:700">${esc(item.name)}</div>
+          <div style="font-size:10px;color:var(--t3)">${st.toFixed(2)} ${item.unit||''} remaining</div>
+        </div>
+        <span class="badge badge-orange">${st<=0?'Out':'Low'}</span>
+      </div>`;
+    }).join('') : `<div style="color:var(--t3);text-align:center;padding:14px">All stock levels OK ✅</div>`;
+
+    // Recent sales
+    const recent = this.getSales().slice(0,15);
+    document.getElementById('salesDiv').innerHTML = recent.length ? recent.map(s => {
+      const d = new Date(s.date);
+      const timeStr = d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+      const dateStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const freeItems = (s.items||[]).filter(i=>i.saleMode==='free').length;
+      return `<div class="sale-row" onclick="SaleDetail.show('${s.id}')">
+        <div class="sale-row-info">
+          <strong>${dateStr}, ${timeStr}</strong>
+          ${(s.items||[]).length} item${(s.items||[]).length!==1?'s':''}${freeItems>0?` (${freeItems} free)`:''} • Sale #${(s.id||'').slice(-6)}
+        </div>
+        <div class="sale-row-amt">
+          <div class="total">${cur} ${(s.total||0).toFixed(2)}</div>
+          <div class="profit">+${cur} ${(s.profit||0).toFixed(2)} profit</div>
+        </div>
+      </div>`;
+    }).join('') : `<div style="color:var(--t3);text-align:center;padding:20px">No sales in this period</div>`;
+  }
+};
+
+// ─── SALE DETAIL ──────────────────────────────────
+const SaleDetail = {
+  show(id) {
+    const sale = S.sales.find(s=>s.id===id);
+    if (!sale) return;
+    const cur = S.settings.currency;
+    const modeColor = {'retail':'var(--cyan)','wholesale':'var(--purple)','free':'var(--green)'};
+    const modeLabel = {'retail':'🏪 Retail','wholesale':'📦 Wholesale','free':'🎁 Free'};
+    document.getElementById('saleBody').innerHTML = `
+      <div style="color:var(--t2);font-size:12px;margin-bottom:14px">
+        🕐 ${new Date(sale.date).toLocaleString()} &nbsp;|&nbsp; ID: ${(sale.id||'').slice(-8)}
+      </div>
+      ${(sale.items||[]).map(si => {
+        const md = si.saleMode||'retail';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-weight:700;font-size:13px">${esc(si.name)}</div>
+            <div style="font-size:11px;color:var(--t3)">${si.qty} ${si.unit} × ${cur} ${si.unitPrice?.toFixed(2)||0}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${modeColor[md]||'var(--cyan)'}">${md==='free'?'FREE':`${cur} ${(si.price||0).toFixed(2)}`}</div>
+            <div style="font-size:10px;color:${modeColor[md]||'var(--cyan)'}">${modeLabel[md]||'Retail'}</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span>Subtotal</span><span>${cur} ${(sale.subtotal||0).toFixed(2)}</span></div>
+        ${sale.cartDiscount>0?`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--green)"><span>Discount</span><span>-${cur} ${sale.cartDiscount.toFixed(2)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:15px;font-weight:800;border-top:1px solid var(--border);margin-top:4px"><span>Total</span><span class="text-cyan">${cur} ${(sale.total||0).toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:var(--green)"><span>Profit</span><span>+${cur} ${(sale.profit||0).toFixed(2)}</span></div>
+      </div>
+    `;
+    Modal.open('saleModal');
+  }
+};
+
+// ─── BACKUP ───────────────────────────────────────
+const Backup = {
+  export() {
+    const data = { categories: S.categories, items: S.items, sales: S.sales, settings: S.settings, exportDate: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `janith-mobile-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    toast('Backup exported ⬇️','success');
+  },
+  async import(event) {
+    const file = event.target.files[0]; if (!file) return;
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!confirm(`Import ${data.items?.length||0} products, ${data.categories?.length||0} categories, ${data.sales?.length||0} sales? This will overwrite existing data.`)) return;
+    if (data.categories) await DB.set('categories', Object.fromEntries(data.categories.map(c=>{ const {id,...rest}=c; return [id,rest]; })));
+    if (data.items) await DB.set('items', Object.fromEntries(data.items.map(i=>{ const {id,...rest}=i; return [id,rest]; })));
+    if (data.sales) await DB.set('sales', Object.fromEntries(data.sales.map(s=>{ const {id,...rest}=s; return [id,rest]; })));
+    await loadAll();
+    toast('Data imported ✅','success');
+  },
+  async seed() {
+    if (!confirm('Add sample phone shop data? (will not overwrite existing)')) return;
+    const cats = ['Phones','Cases & Covers','Chargers & Cables','Earphones','Screen Protectors','Power Banks','Memory Cards','Accessories'];
+    const catIds = {};
+    for (const name of cats) {
+      const id = await DB.push('categories', { name, createdAt: new Date().toISOString() });
+      catIds[name] = id;
+    }
+    const sampleItems = [
+      {name:'Samsung Galaxy A55 Case',categoryId:catIds['Cases & Covers'],price:350,wholesalePrice:280,costPrice:200,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:30,costPrice:200,dateAdded:'2025-01-01'}]},
+      {name:'iPhone 15 Tempered Glass',categoryId:catIds['Screen Protectors'],price:250,wholesalePrice:180,costPrice:100,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:50,costPrice:100,dateAdded:'2025-01-01'}]},
+      {name:'USB-C Fast Charger 20W',categoryId:catIds['Chargers & Cables'],price:900,wholesalePrice:750,costPrice:550,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:20,costPrice:550,dateAdded:'2025-01-01'}]},
+      {name:'Type-C Cable 1m',categoryId:catIds['Chargers & Cables'],price:200,wholesalePrice:150,costPrice:80,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:100,costPrice:80,dateAdded:'2025-01-01'}]},
+      {name:'Wireless Earbuds',categoryId:catIds['Earphones'],price:2500,wholesalePrice:2000,costPrice:1500,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:15,costPrice:1500,dateAdded:'2025-01-01'}]},
+      {name:'10000mAh Power Bank',categoryId:catIds['Power Banks'],price:2200,wholesalePrice:1800,costPrice:1300,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:12,costPrice:1300,dateAdded:'2025-01-01'}]},
+      {name:'128GB MicroSD Card',categoryId:catIds['Memory Cards'],price:1200,wholesalePrice:950,costPrice:700,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:25,costPrice:700,dateAdded:'2025-01-01'}]},
+      {name:'Phone Stand / Holder',categoryId:catIds['Accessories'],price:450,wholesalePrice:350,costPrice:220,unit:'pcs',type:'unit',stockBatches:[{batchId:'b1',quantity:40,costPrice:220,dateAdded:'2025-01-01'}]},
+    ];
+    for (const item of sampleItems) {
+      await DB.push('items', { ...item, createdAt: new Date().toISOString(), lowStockThreshold:5, defaultDiscount:0 });
+    }
+    await loadAll();
+    toast('Sample data added ✅','success');
+  },
+  async clearSales() {
+    if (!confirm('Delete ALL sales history? This cannot be undone.')) return;
+    await DB.del('sales');
+    await loadAll();
+    toast('Sales cleared 🗑️','info');
+  }
+};
+
+// ─── AI ASSISTANT ─────────────────────────────────
+const AI = {
+  _pending: null,
+  async send() {
+    const input = document.getElementById('aiInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    this.addMsg('user', msg);
+    this.showTyping();
+
+    // Handle confirm add
+    if (this._pending && (msg.toLowerCase().includes('yes') || msg.toLowerCase() === 'ok' || msg.toLowerCase() === 'add')) {
+      const item = this._pending;
+      this._pending = null;
+      this.hideTyping();
+      POS.addFlow(item.id);
+      this.addMsg('bot', `✅ **${item.name}** selected! Choose sale type in the popup.`);
+      return;
+    }
+    this._pending = null;
+
+    const key = S.settings.geminiKey || GEMINI_KEY_DEFAULT;
+    if (!key) {
+      this.hideTyping();
+      this.addMsg('bot', '⚠️ Configure Gemini API Key in ⚙️ Settings → Gemini Key');
+      return;
+    }
+
+    const invText = S.items.map(i =>
+      `- ID:${i.id} | ${i.name} | Rs.${i.price||0} retail / Rs.${i.wholesalePrice||i.price||0} wholesale | Stock:${getStock(i).toFixed(0)} ${i.unit||''} | Cat:${S.categories.find(c=>c.id===i.categoryId)?.name||'?'}`
+    ).join('\n');
+    const lowText = S.items.filter(i=>getStock(i)<=(i.lowStockThreshold||S.settings.lowStockAlert)).map(i=>i.name).join(', ')||'None';
+    const today = new Date().toDateString();
+    const todaySales = S.sales.filter(s=>new Date(s.date).toDateString()===today);
+    const todayTotal = todaySales.reduce((a,s)=>a+(s.total||0),0);
+
+    const sysPrompt = `You are Janith Mobile AI — a smart assistant for a Sri Lankan phone and accessories shop called "${S.settings.shopName}".
+
+CURRENT INVENTORY (${S.items.length} products):
+${invText}
+
+LOW STOCK ITEMS: ${lowText}
+TODAY'S SALES: ${todaySales.length} transactions, Total: Rs.${todayTotal.toFixed(2)}
+
+CAPABILITIES:
+1. Answer questions about prices, stock, categories
+2. Help find products and compare prices
+3. Add items to cart with [ADD_TO_CART:item_id:item_name]
+4. Give sales summaries and stock reports
+5. Suggest accessories and complementary products
+
+RULES:
+- Respond in English (or Sinhala if user writes in Sinhala)
+- When user asks to add something, reply [ADD_TO_CART:EXACT_ITEM_ID:item_name] on its own line
+- Always show prices in Rs.
+- Be concise and helpful`;
+
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{role:'user',parts:[{text:sysPrompt+'\n\nUser: '+msg}]}],
+          generationConfig:{maxOutputTokens:600,temperature:0.7}
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      let reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+
+      const cartMatch = reply.match(/\[ADD_TO_CART:([^\s:]+):([^\]]+)\]/);
+      this.hideTyping();
+      if (cartMatch) {
+        const itemId = cartMatch[1];
+        const itemName = cartMatch[2];
+        const item = S.items.find(i=>i.id===itemId) ||
+                     S.items.find(i=>i.name.toLowerCase().includes(itemName.toLowerCase()));
+        reply = reply.replace(cartMatch[0],'').trim();
+        if (item) {
+          this._pending = item;
+          this.addMsg('bot', (reply||`Add **${item.name}** to cart?`) + '\n\n[Say "yes" to confirm]', item.id, item.name);
+        } else {
+          this.addMsg('bot', reply||'Product not found.');
+        }
+      } else {
+        this.addMsg('bot', reply);
+      }
+    } catch(e) {
+      this.hideTyping();
+      this.addMsg('bot', '❌ AI Error: '+e.message);
+    }
+  },
+  quick(msg) {
+    document.getElementById('aiInput').value = msg;
+    this.send();
+  },
+  addMsg(role, text, itemId=null, itemName=null) {
+    const msgs = document.getElementById('aiMsgs');
+    const div = document.createElement('div');
+    div.className = 'ai-msg '+role;
+    const av = role==='bot'
+      ? `<div class="msg-avatar">✨</div>`
+      : `<div class="msg-avatar">👤</div>`;
+    const formatted = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    let action = '';
+    if (itemId && itemName) {
+      action = `<button class="ai-action" onclick="POS.addFlow('${itemId}');this.textContent='✅ Added!';this.style.background='var(--green2)'">➕ Add ${esc(itemName)} to Cart</button>`;
+    }
+    div.innerHTML = `${av}<div><div class="msg-bubble">${formatted}</div>${action}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  },
+  showTyping() {
+    const msgs = document.getElementById('aiMsgs');
+    const div = document.createElement('div');
+    div.id = 'typingDot';
+    div.className = 'ai-msg bot';
+    div.innerHTML = `<div class="msg-avatar">✨</div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    document.getElementById('aiStatus').textContent = 'Thinking...';
+  },
+  hideTyping() {
+    document.getElementById('typingDot')?.remove();
+    document.getElementById('aiStatus').textContent = 'Ready';
+  },
+  clear() {
+    document.getElementById('aiMsgs').innerHTML = `<div class="ai-msg bot"><div class="msg-avatar">✨</div><div><div class="msg-bubble">Chat cleared! How can I help you? 😊</div></div></div>`;
+  }
+};
+
+// ─── SCANNER ──────────────────────────────────────
+const Scanner = {
+  _scanner: null,
+  openPOS() {
+    Modal.open('scanModal');
+    setTimeout(() => {
+      try {
+        if (typeof Html5QrcodeScanner !== 'undefined') {
+          this._scanner = new Html5QrcodeScanner('scanBox',{fps:10,qrbox:250},false);
+          this._scanner.render(
+            code => { this.close(); POS.scanBarcode(code); },
+            ()=>{}
+          );
+        } else {
+          document.getElementById('scanBox').innerHTML = `<div style="padding:30px;text-align:center;color:var(--t2)">Camera scanner not loaded.<br>Use the barcode input field instead.</div>`;
+        }
+      } catch(e) {
+        document.getElementById('scanBox').innerHTML = `<div style="padding:30px;text-align:center;color:var(--t2)">Camera error. Use barcode input instead.</div>`;
+      }
+    }, 300);
+  },
+  close() {
+    try { this._scanner?.clear(); } catch(e){}
+    this._scanner = null;
+    Modal.close('scanModal');
+    document.getElementById('scanBox').innerHTML = '';
+  }
+};
+
+// ─── SETTINGS ─────────────────────────────────────
+const Settings = {
+  open() {
+    document.getElementById('settingsBody').innerHTML = `
+      <div class="form-group">
+        <label>Shop Name</label>
+        <input id="setName" type="text" value="${esc(S.settings.shopName)}">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Currency Symbol</label>
+          <input id="setCur" type="text" value="${esc(S.settings.currency)}">
+        </div>
+        <div class="form-group">
+          <label>Admin PIN</label>
+          <input id="setPin" type="password" value="${S.settings.adminPin}" maxlength="6">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>🤖 Gemini AI API Key</label>
+        <input id="setGemini" type="password" value="${esc(S.settings.geminiKey||'')}">
+        <span style="font-size:11px;color:var(--t2);margin-top:3px;display:block">
+          Get free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--cyan)">aistudio.google.com</a>
+        </span>
+      </div>
+      <div class="form-group">
+        <label>Low Stock Alert Threshold</label>
+        <input id="setLow" type="number" value="${S.settings.lowStockAlert||5}" min="0">
+      </div>
+      <div class="form-group">
+        <label>Receipt Footer Note</label>
+        <input id="setNote" type="text" value="${esc(S.settings.receiptNote||'')}">
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+      <div class="form-group">
+        <label style="color:var(--orange)">Firebase RTDB URL</label>
+        <input type="text" value="${RTDB_URL}" readonly style="color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:11px">
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="Modal.close('settingsModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="Settings.save()">💾 Save Settings</button>
+      </div>
+    `;
+    Modal.open('settingsModal');
+  },
+  async save() {
+    S.settings.shopName = document.getElementById('setName').value;
+    S.settings.currency = document.getElementById('setCur').value;
+    S.settings.adminPin = document.getElementById('setPin').value;
+    S.settings.geminiKey = document.getElementById('setGemini').value;
+    S.settings.lowStockAlert = parseInt(document.getElementById('setLow').value)||5;
+    S.settings.receiptNote = document.getElementById('setNote').value;
+    await DB.set('settings/main', S.settings);
+    Modal.close('settingsModal');
+    toast('Settings saved ✅','success');
+  }
+};
+
+// ─── HELPERS ──────────────────────────────────────
+function getStock(item) {
+  const batches = item.stockBatches;
+  if (!batches) return 0;
+  const arr = Array.isArray(batches) ? batches : Object.values(batches);
+  return arr.reduce((s,b) => s + (b ? (b.quantity||0) : 0), 0);
+}
+
+function getCatEmoji(catId) {
+  const cat = S.categories.find(c=>c.id===catId);
+  if (!cat) return '📱';
+  const n = (cat.name||'').toLowerCase();
+  if (n.includes('phone')||n.includes('mobile')||n.includes('smartphone')) return '📱';
+  if (n.includes('cover')||n.includes('case')||n.includes('protect')) return '🛡️';
+  if (n.includes('charger')||n.includes('cable')||n.includes('charging')) return '🔌';
+  if (n.includes('earphone')||n.includes('headphone')||n.includes('earbud')||n.includes('audio')) return '🎧';
+  if (n.includes('screen')||n.includes('glass')||n.includes('temper')||n.includes('protector')) return '🪟';
+  if (n.includes('battery')||n.includes('power bank')||n.includes('powerbank')) return '🔋';
+  if (n.includes('memory')||n.includes('storage')||n.includes('sd card')||n.includes('microsd')) return '💾';
+  if (n.includes('repair')||n.includes('spare')||n.includes('part')) return '🔧';
+  if (n.includes('watch')||n.includes('wearable')||n.includes('smart watch')) return '⌚';
+  if (n.includes('tablet')||n.includes('ipad')) return '📟';
+  if (n.includes('accessory')||n.includes('accessories')) return '🎒';
+  if (n.includes('holder')||n.includes('stand')||n.includes('mount')) return '🗜️';
+  return '📱';
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ─── PWA ──────────────────────────────────────────
+function setupPWA() {
+  function makeIcon(size) {
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#06080f';
+    ctx.fillRect(0,0,size,size);
+    const g = ctx.createLinearGradient(0,0,size,size);
+    g.addColorStop(0,'#00d4ff');
+    g.addColorStop(1,'#8b5cf6');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(size*0.12,size*0.12,size*0.76,size*0.76,size*0.18) : ctx.arc(size/2,size/2,size*0.42,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = `bold ${size*0.22}px 'Exo 2', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('JM', size/2, size*0.42);
+    ctx.font = `600 ${size*0.11}px 'Exo 2', sans-serif`;
+    ctx.fillText('POS', size/2, size*0.63);
+    return c.toDataURL();
+  }
+
+  try {
+    const icon192 = makeIcon(192);
+    const icon512 = makeIcon(512);
+    const manifest = {
+      name:'Janith Mobile POS',short_name:'JM POS',description:'Smart Phone Shop POS System',
+      start_url:'./',display:'standalone',
+      background_color:'#06080f',theme_color:'#00d4ff',
+      orientation:'landscape-primary',
+      icons:[
+        {src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
+        {src:icon512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest'; link.href = url;
+    document.head.appendChild(link);
+    const atIcon = document.createElement('link');
+    atIcon.rel = 'apple-touch-icon';
+    atIcon.href = icon192;
+    document.head.appendChild(atIcon);
+  } catch(e) {}
+
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+const CACHE = 'jm-mobile-pos-v1';
+const URLS = [
+  'https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap',
+  'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js'
+];
+self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS).catch(()=>{}))); });
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); clients.claim(); });
+self.addEventListener('fetch', e => {
+  if (e.request.url.includes('firebasedatabase') || e.request.url.includes('googleapis.com/v1beta')) return;
+  e.respondWith(caches.match(e.request).then(cached => {
+    if (cached) return cached;
+    return fetch(e.request).then(res => {
+      if (res.ok && e.request.url.startsWith('https://')) { const clone = res.clone(); caches.open(CACHE).then(c => c.put(e.request, clone)); }
+      return res;
+    }).catch(() => cached || new Response('Offline', {status:503}));
+  }));
+});`;
+    const swBlob = new Blob([swCode],{type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+  }
+
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const bar = document.getElementById('pwaBar');
+    if (bar) bar.classList.add('show');
+    document.getElementById('pwaInstallBtn').onclick = () => {
+      deferredPrompt?.prompt();
+      bar.classList.remove('show');
+    };
+  });
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('pwaBar').classList.remove('show');
+    toast('App installed! 📱','success');
+  });
+}
+
+// ─── START ────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" onerror="console.log('Scanner not loaded')"></script>
+</body>
+</html>
